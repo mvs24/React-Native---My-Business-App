@@ -6,7 +6,7 @@ const clientSchema = new mongoose.Schema({
     required: [true, "A client must have a name"],
     unique: true,
   },
-  businnes: {
+  business: {
     type: mongoose.Schema.ObjectId,
     ref: "Business",
   },
