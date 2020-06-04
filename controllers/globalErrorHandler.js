@@ -1,6 +1,7 @@
 const AppError = require("../utils/AppError");
 
 const handleDuplicateError = (err) => {
+  console.log(err);
   const fields = Object.keys(err.keyPattern).join(". ");
 
   const message = `Duplicate field value: ${fields}. Please use another value!`;
@@ -19,10 +20,10 @@ const handleJWTExpiredError = () =>
   new AppError("Your token has expired! Please log in again.", 401);
 
 const handleValidationError = (err) => {
-  const errors = Object.values(err.errors);
-  const newErr = errors.map((el) => el.message);
+  // const errors = Object.values(err.errors);
+  // const newErr = errors.map((el) => el.message);
 
-  return new AppError(newErr.join(". \n"), 400);
+  return new AppError(err.message, 400);
 };
 
 const sendDevelopmentError = (res, err) => {
@@ -35,7 +36,7 @@ const sendDevelopmentError = (res, err) => {
 };
 
 const sendProductionError = (res, err) => {
-  console.log(err);
+  console.log(err.message);
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -54,16 +55,25 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || "Something went wrong";
 
+  let msg = err.message;
+
   if (process.env.NODE_ENV === "development") {
     sendDevelopmentError(res, err);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
+    error.message = msg || "Something went wrong";
+    error.status = err.status;
+    error.statusCode = err.statusCode;
+    error.isOperational = err.isOperational;
+    console.log(error);
 
     if (error.code === 11000) error = handleDuplicateError(error);
-    if (error.name === "ValidationError") error = handleValidationError(error);
+    if (error.errors) error = handleValidationError(error);
     if (error.name === "CastError") error = handleCastErrorDB(error);
     if (error.name === "JsonWebTokenError") error = handleJWTError();
     if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
+
+    // console.log(error);
 
     sendProductionError(res, error);
   }
