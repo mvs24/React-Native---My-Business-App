@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 const userRouter = require("./routes/userRoutes");
@@ -10,6 +11,7 @@ const AppError = require("./utils/AppError");
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/businesses", businessRouter);

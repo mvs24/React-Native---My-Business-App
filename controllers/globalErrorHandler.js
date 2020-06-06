@@ -27,7 +27,7 @@ const handleValidationError = (err) => {
 };
 
 const sendDevelopmentError = (res, err) => {
-  res.status(err.statusCode).json({
+  res.json({
     status: err.status,
     error: err,
     message: err.message,
@@ -36,9 +36,8 @@ const sendDevelopmentError = (res, err) => {
 };
 
 const sendProductionError = (res, err) => {
-  console.log(err.message);
   if (err.isOperational) {
-    res.status(err.statusCode).json({
+    return res.json({
       status: err.status,
       message: err.message,
     });

@@ -42,12 +42,11 @@ exports.setBusiness = (req, res, next) => {
 };
 
 exports.getTopClients = asyncWrapper(async (req, res, next) => {
-  console.log(req.business.clients);
   const sortedClients = req.business.clients.sort(
     (cl1, cl2) => !(cl1.rewards - cl2.rewards)
   );
 
-  res.status(200).json({
+  res.status(200).send({
     status: "success",
     data: sortedClients,
   });
