@@ -20,6 +20,9 @@ exports.signup = asyncWrapper(async (req, res, next) => {
 
   const token = signToken(user._id);
 
+  user.password = undefined;
+  user.passwordConfirm = undefined;
+
   res.status(200).json({
     status: "success",
     data: user,
@@ -41,6 +44,8 @@ exports.login = asyncWrapper(async (req, res, next) => {
   }
 
   const token = signToken(user._id);
+
+  user.password = undefined;
 
   res.status(200).json({
     status: "success",
@@ -75,3 +80,16 @@ exports.protect = async (req, res, next) => {
   req.user = currentUser;
   next();
 };
+
+exports.getCurrentUser = asyncWrapper(async (req, res, next) => {
+  // console.log(req.us);
+  const user = await User.findById(req.user.id);
+
+  user.password = undefined;
+  user.passwordConfirm = undefined;
+
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
