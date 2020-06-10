@@ -11,6 +11,9 @@ router.get(
   authController.protect,
   authController.getCurrentUser
 );
+router
+  .route("/has-business")
+  .get(authController.protect, userController.hasBusiness);
 
 router.route("/").get(userController.getAllUsers);
 
