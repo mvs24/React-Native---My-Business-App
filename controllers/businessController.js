@@ -42,9 +42,13 @@ exports.setBusiness = (req, res, next) => {
 };
 
 exports.getTopClients = asyncWrapper(async (req, res, next) => {
-  const sortedClients = req.business.clients.sort(
-    (cl1, cl2) => !(cl1.rewards - cl2.rewards)
-  );
+  const sortedClients = req.business.clients.sort((cl1, cl2) => {
+    if (cl1.rewards < cl2.rewards) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
 
   res.status(200).send({
     status: "success",

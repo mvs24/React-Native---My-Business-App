@@ -14,6 +14,12 @@ router.use(
 
 router.route("/").post(clientController.createClient);
 
+router.get(
+  "/:businessId/search",
+  authController.protect,
+  clientController.searchClient
+);
+
 router.patch("/:clientId/give-reward", clientController.giveReward);
 router.route("/:clientId").patch(clientController.updateClient);
 

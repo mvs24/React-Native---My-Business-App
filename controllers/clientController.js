@@ -2,6 +2,7 @@ const factory = require("./handlerFactory");
 const Client = require("../models/clientModel");
 const asyncWrapper = require("../utils/asyncWrapper");
 const AppError = require("../utils/AppError");
+const Business = require("../models/businessModel");
 
 exports.createClient = factory.createOne(Client);
 
@@ -42,8 +43,6 @@ exports.giveReward = asyncWrapper(async (req, res, next) => {
     );
   }
 
-  console.log(client.totalSum, priceReward * 1);
-
   if (client.totalSum >= priceReward * 1) {
     client.rewards += 1;
     client.totalSum -= priceReward;
@@ -56,4 +55,19 @@ exports.giveReward = asyncWrapper(async (req, res, next) => {
   } else {
     return next(new AppError("This client has not reached that reward! "));
   }
+});
+
+exports.searchClient = asyncWrapper(async (req, res, next) => {
+  const business = await Business.findById(req.params.businessId);
+
+  const clients = await Client.find({
+    business,
+    fullName: new RegExp(req.query.searchInput, "i"),
+  });
+
+  res.status(200).json({
+    status: "success",
+    results: clients.length,
+    data: clients,
+  });
 });
