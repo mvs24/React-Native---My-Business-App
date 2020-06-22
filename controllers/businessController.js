@@ -22,14 +22,14 @@ exports.getCurrentBusiness = asyncWrapper(async (req, res, next) => {
 });
 
 exports.getCurrentUserBusiness = asyncWrapper(async (req, res, next) => {
-  const business = await Business.findOne({ user: req.user._id });
+  const business = await Business.findOne({ user: req.user._id })
 
   if (!business) {
     return next(
       new AppError("There is no business belonging to this user!", 404)
     );
   }
-
+  
   res.status(200).json({
     status: "success",
     data: business,
